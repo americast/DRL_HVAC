@@ -13,6 +13,17 @@ class CustomEnv(gym.Env):
     }
 
     def __init__(self, goal_velocity = 0):
+
+        self.E2B = 10000.0
+        self.gamma = 0.35
+        self.sigma = 0.3 # Assumed
+        self.d_max = 0.9 * self.E2B
+        self.c_max = 0.9 * self.E2B
+        self.w_c, self.w_b = 0.0, 1.0
+        self.eps = 0.35
+        self.k2up = 0.5
+        self.k2low = 0.5
+
         self.min_action = -1.0
         self.max_action = 1.0
         self.min_position = -1.2
@@ -27,10 +38,28 @@ class CustomEnv(gym.Env):
 
         self.viewer = None
 
-        self.action_space = spaces.Box(low=self.min_action, high=self.max_action,
-                                       shape=(1,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=self.low_state, high=self.high_state,
-                                            dtype=np.float32)
+        # self.action_space = spaces.Box(low=self.min_action, high=self.max_action,
+                                    #    shape=(1,), dtype=np.float32)
+
+        self.action_space = spaces.Box(
+            low = np.array([-self.d_max, -1, -1]),
+            high = np.array([self.c_max, 1, 1]),
+            # low = -1,
+            # high = 1,
+            # shape=(1,),
+            dtype= np.float32)
+
+        
+        # self.observation_space = spaces.Box(low=self.low_state, high=self.high_state,
+                                            # dtype=np.float32)
+
+        self.observation_space = spaces.Box(
+            low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
+            high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
+            # low = -1,
+            # high = 1,
+            # shape=(1,),
+            dtype=np.float32)
 
         self.seed()
         self.reset()
