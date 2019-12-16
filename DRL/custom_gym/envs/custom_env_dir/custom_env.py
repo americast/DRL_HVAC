@@ -27,19 +27,20 @@ class CustomEnv(gym.Env):
         self.eps = 0.35
         self.k2up = 0.5
         self.k2low = 0.5
+        self.counter = 0
 
-        self.min_action = -1.0
-        self.max_action = 1.0
+        # self.min_action = -1.0
+        # self.max_action = 1.0
 
-        self.min_position = -1.2
-        self.max_position = 0.6
-        self.max_speed = 0.07
+        # self.min_position = -1.2
+        # self.max_position = 0.6
+        # self.max_speed = 0.07
 
-        self.low_state = np.array([self.min_position, -self.max_speed])
-        self.high_state = np.array([self.max_position, self.max_speed])
+        # self.low_state = np.array([self.min_position, -self.max_speed])
+        # self.high_state = np.array([self.max_position, self.max_speed])
 
-        self.action_space = spaces.Box(low=self.min_action, high=self.max_action,shape=(1,), dtype=np.float32)
-        self.observation_space = spaces.Box(low=self.low_state, high=self.high_state,dtype=np.float32)
+        # self.action_space = spaces.Box(low=self.min_action, high=self.max_action,shape=(1,), dtype=np.float32)
+        # self.observation_space = spaces.Box(low=self.low_state, high=self.high_state,dtype=np.float32)
 
         # pu.db
         # spaces.Tuple([
@@ -56,9 +57,6 @@ class CustomEnv(gym.Env):
         self.action_space = spaces.Box(
             low = np.array([-self.d_max, -1, -1]),
             high = np.array([self.c_max, 1, 1]),
-            # low = -1,
-            # high = 1,
-            # shape=(1,),
             dtype= np.float32)
 
         
@@ -70,6 +68,13 @@ class CustomEnv(gym.Env):
             high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, 1, np.inf]),
             dtype=np.float32)
 
+        
+        self.f_household = open("data/household_power_consumption.txt", "r")
+        self.f_household.readline()
+
+        self.f_power = open("data/Data_for_UCI_named.csv")
+        self.f_power.readline()
+
         self.seed()
         self.reset()
 
@@ -78,6 +83,15 @@ class CustomEnv(gym.Env):
         return [seed]
 
     def step(self, action):
+        line_household = self.f_household.readline()
+        line_power = self.f_power.readline()
+        self.counter += 1
+        self.v = self.np_random.uniform(low = 0, high = 1)
+
+        sub_meter = float(line_household.split(";")[-1])
+
+        self.state[1] = sub_meter
+        self.state[2] = self.v
 
         # position = self.state[0]
         # velocity = self.state[1]
@@ -104,6 +118,7 @@ class CustomEnv(gym.Env):
         self.state[4] += action[2]
 
         self.state[0] += action[0]
+        self.state[-1] = self.counter
         e_b = self.state[0]
         e_net = self.state[1]
         v_T = self.state[2]
@@ -133,6 +148,8 @@ class CustomEnv(gym.Env):
 
         # high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0])
         
+
+
         self.state = np.array([
             self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), 
             self.np_random.uniform(low = -2, high = 2),
@@ -142,6 +159,7 @@ class CustomEnv(gym.Env):
             self.np_random.uniform(low = 0, high = 9999)])
         
         # self.state = deepcopy(self.observation_space)
+        self.counter = 0
         return np.array(self.state)
 
 #    def get_state(self):
