@@ -17,6 +17,7 @@ class CustomEnv(gym.Env):
 
     def __init__(self, goal_velocity = 0):
 
+        self.v = 1  # To be taken from data
         self.E2B = 10000.0
         self.gamma = 0.35
         self.sigma = 0.3 # Assumed
@@ -27,39 +28,6 @@ class CustomEnv(gym.Env):
         self.k2up = 0.5
         self.k2low = 0.5
 
-        # self.c_min = 1.0
-        # self.b_max = 1.0
-        # self.min_position = -1.2
-        # self.max_position = 0.6
-        # self.max_speed = 0.07
-        # self.goal_position = 0.45 # was 0.5 in gym, 0.45 in Arnaud de Broissia's version
-        # self.goal_velocity = goal_velocity
-        # self.power = 0.0015
-
-        # self.low_state = np.array([self.min_position, -self.max_speed])
-        # self.high_state = np.array([self.max_position, self.max_speed])
-
-        # self.viewer = None
-
-        # self.action_space = spaces.Tuple([
-        #     spaces.Box(low=-self.d_max, high=self.c_max, shape=(1,), dtype=np.float32), # Bt
-        #     spaces.Box(low=-1, high=1, shape=(2,), dtype=np.float32)]) # Tp
-
-        # self.action_space = spaces.Box(
-        #     # low = np.array([-self.d_max, -1, -1]),
-        #     # high = np.array([self.c_max, 1, 1]),
-        #     low = -1,
-        #     high = 1,
-        #     shape=(1,),
-        #     dtype= np.float16)
-
-        # self.observation_space = spaces.Box(
-        #     # low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
-        #     # high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
-        #     low = -1,
-        #     high = 1,
-        #     shape=(1,),
-        #     dtype=np.float16)
         self.min_action = -1.0
         self.max_action = 1.0
 
@@ -82,43 +50,35 @@ class CustomEnv(gym.Env):
         #     spaces.Box(low=0, high=1, shape=(1,), dtype=np.float32),  #w_c
         #     spaces.Box(low=0, high=np.inf, shape=(1,), dtype=np.float32)]) #t
 
+        # self.action_space = spaces.Box(low=self.min_action, high=self.max_action,
+                                    #    shape=(1,), dtype=np.float32)
 
-        # self.seed()
+        self.action_space = spaces.Box(
+            low = np.array([-self.d_max, -1, -1]),
+            high = np.array([self.c_max, 1, 1]),
+            # low = -1,
+            # high = 1,
+            # shape=(1,),
+            dtype= np.float32)
+
+        
+        # self.observation_space = spaces.Box(low=self.low_state, high=self.high_state,
+                                            # dtype=np.float32)
+
+        self.observation_space = spaces.Box(
+            low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
+            high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, 1, np.inf]),
+            dtype=np.float32)
+
+        self.seed()
         self.reset()
 
-    # def seed(self, seed=None):
-    #     self.np_random, seed = seeding.np_random(seed)
-    #     return [seed]
+    def seed(self, seed=None):
+        self.np_random, seed = seeding.np_random(seed)
+        return [seed]
 
     def step(self, action):
 
-        self.state[3] += action[1][0]
-        self.state[4] += action[1][1]
-
-        self.state[0] += action[0]
-        e_b = self.state[0]
-        e_net = self.state[1]
-        v_T = self.state[2]
-        w_e = self.state[3]
-        w_c = self.state[4]
-        t = self.state[5]
-        
-        r_b = 0
-        u = self.sigma * self.v
-        if e_b < self.gamma * self.E2B:
-            r_b = -(e_b * u + self.eps * self.E2B)
-        else:
-            r_b = -(e_b * u + (1 - self.eps) * self.E2B)
-        
-        r_net = 0
-        if w_c > 1:
-            r_net = -(e_net * u + self.k2up * (w_c - 1))
-        elif w_c < 0:
-            r_net = -(e_net * u + self.k2low * (0 - w_c))
-        else:
-            r_net = -(e_net * u)
-        
-        reward = r_net + r_b
         # position = self.state[0]
         # velocity = self.state[1]
         # force = min(max(action[0], -1.0), 1.0)
@@ -139,11 +99,49 @@ class CustomEnv(gym.Env):
         # reward-= math.pow(action[0],2)*0.1
 
         # self.state = np.array([position, velocity])
+        # pu.db
+        self.state[3] += action[1]
+        self.state[4] += action[2]
+
+        self.state[0] += action[0]
+        e_b = self.state[0]
+        e_net = self.state[1]
+        v_T = self.state[2]
+        w_e = self.state[3]
+        w_c = self.state[4]
+        t = self.state[5]
+        r_b = 0
+        u = self.sigma * self.v
+        if e_b < self.gamma * self.E2B:
+            r_b = -(e_b * u + self.eps * self.E2B)
+        else:
+            r_b = -(e_b * u + (1 - self.eps) * self.E2B)
+        r_net = 0
+        if w_c > 1:
+            r_net = -(e_net * u + self.k2up * (w_c - 1))
+        elif w_c < 0:
+            r_net = -(e_net * u + self.k2low * (0 - w_c))
+        else:
+            r_net = -(e_net * u)
+
+        reward = r_net + r_b
+
         return self.state, reward, False, {}
 
     def reset(self):
-        self.state = deepcopy(self.observation_space)
-        # self.state = np.array([self.np_random.uniform(low=-0.6, high=-0.4), 0])
+        # low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0])
+
+        # high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0])
+        
+        self.state = np.array([
+            self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), 
+            self.np_random.uniform(low = -2, high = 2),
+            self.np_random.uniform(low = -2, high = 2),
+            self.np_random.uniform(low = 0, high = 1),
+            self.np_random.uniform(low = 0, high = 1),
+            self.np_random.uniform(low = 0, high = 9999)])
+        
+        # self.state = deepcopy(self.observation_space)
         return np.array(self.state)
 
 #    def get_state(self):
@@ -206,7 +204,7 @@ class CustomEnv(gym.Env):
 
     #     return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
-    def close(self):
-        if self.viewer:
-            self.viewer.close()
-            self.viewer = None
+    # def close(self):
+    #     if self.viewer:
+    #         self.viewer.close()
+    #         self.viewer = None

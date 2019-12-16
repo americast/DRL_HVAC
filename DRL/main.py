@@ -34,7 +34,7 @@ for episode in range(50):
         state = new_state
         episode_reward += reward
 
-        if done:
+        if step == 499:
             sys.stdout.write("episode: {}, reward: {}, average _reward: {} \n".format(episode, np.round(episode_reward, decimals=2), np.mean(rewards[-10:])))
             break
 
