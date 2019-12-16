@@ -5,6 +5,7 @@ import numpy as np
 import gym
 from gym import spaces
 from gym.utils import seeding
+from copy import deepcopy
 
 class CustomEnv(gym.Env):
     metadata = {
@@ -14,6 +15,7 @@ class CustomEnv(gym.Env):
 
     def __init__(self, goal_velocity = 0):
 
+        self.v = 1  # To be taken from data
         self.E2B = 10000.0
         self.gamma = 0.35
         self.sigma = 0.3 # Assumed
@@ -55,10 +57,7 @@ class CustomEnv(gym.Env):
 
         self.observation_space = spaces.Box(
             low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
-            high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
-            # low = -1,
-            # high = 1,
-            # shape=(1,),
+            high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, 1, np.inf]),
             dtype=np.float32)
 
         self.seed()
@@ -90,9 +89,9 @@ class CustomEnv(gym.Env):
         # reward-= math.pow(action[0],2)*0.1
 
         # self.state = np.array([position, velocity])
-
-        self.state[3] += action[1][0]
-        self.state[4] += action[1][1]
+        # pu.db
+        self.state[3] += action[1]
+        self.state[4] += action[2]
 
         self.state[0] += action[0]
         e_b = self.state[0]
@@ -122,8 +121,19 @@ class CustomEnv(gym.Env):
         return self.state, reward, False, {}
 
     def reset(self):
-        # self.state = np.array([self.np_random.uniform(low=-0.6, high=-0.4), 0])
-        self.state = np.array([self.np_random.uniform(low=-0.6, high=-0.4), 0])
+        # low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0])
+
+        # high = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0])
+        
+        self.state = np.array([
+            self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), 
+            self.np_random.uniform(low = -2, high = 2),
+            self.np_random.uniform(low = -2, high = 2),
+            self.np_random.uniform(low = 0, high = 1),
+            self.np_random.uniform(low = 0, high = 1),
+            self.np_random.uniform(low = 0, high = 9999)])
+        
+        # self.state = deepcopy(self.observation_space)
         return np.array(self.state)
 
 #    def get_state(self):

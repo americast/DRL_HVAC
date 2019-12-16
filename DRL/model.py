@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F 
 import torch.autograd
 from torch.autograd import Variable
+import pudb
 
 class Critic(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -33,6 +34,7 @@ class Actor(nn.Module):
         """
         Param state is a torch tensor
         """
+        # pu.db
         x = F.relu(self.linear1(state))
         x = F.relu(self.linear2(x))
         x = torch.tanh(self.linear3(x))
