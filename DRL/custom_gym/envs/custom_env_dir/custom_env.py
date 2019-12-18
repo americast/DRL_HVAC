@@ -72,8 +72,19 @@ class CustomEnv(gym.Env):
         self.f_household = open("data/household_power_consumption.txt", "r")
         self.f_household.readline()
 
-        self.f_power = open("data/Data_for_UCI_named.csv")
+        self.f_power = open("data/price_per_KWH.csv", "r")
         self.f_power.readline()
+        self.power_dict = {}
+        while True:
+            line_here = self.f_power.readline()
+            if not line_here: break
+            date, amt = line_here.split(",")
+            month = date.split("-")[-2]
+            yr = date.split("-")[0]
+            date_str = month+"-"+yr
+            self.power_dict[date_str] = float(amt)
+
+        self.f_power.close()
 
         self.seed()
         self.reset()
@@ -84,36 +95,18 @@ class CustomEnv(gym.Env):
 
     def step(self, action):
         line_household = self.f_household.readline()
-        line_power = self.f_power.readline()
+        date_here = line_household.split(";")[0]
+        month = date_here.split("/")[1]
+        yr = date_here.split("/")[-1]
         self.counter += 1
-        self.v = self.np_random.uniform(low = 0, high = 1)
+        # pu.db
+        self.v = self.power_dict[month+"-"+yr]
 
         sub_meter = float(line_household.split(";")[-1])
 
         self.state[1] = sub_meter
         self.state[2] = self.v
 
-        # position = self.state[0]
-        # velocity = self.state[1]
-        # force = min(max(action[0], -1.0), 1.0)
-
-        # velocity += force*self.power -0.0025 * math.cos(3*position)
-        # if (velocity > self.max_speed): velocity = self.max_speed
-        # if (velocity < -self.max_speed): velocity = -self.max_speed
-        # position += velocity
-        # if (position > self.max_position): position = self.max_position
-        # if (position < self.min_position): position = self.min_position
-        # if (position==self.min_position and velocity<0): velocity = 0
-
-        # done = bool(position >= self.goal_position and velocity >= self.goal_velocity)
-
-        # reward = 0
-        # if done:
-        #     reward = 100.0
-        # reward-= math.pow(action[0],2)*0.1
-
-        # self.state = np.array([position, velocity])
-        # pu.db
         self.state[3] += action[1]
         self.state[4] += action[2]
 
