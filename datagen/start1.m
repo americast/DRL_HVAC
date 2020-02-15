@@ -460,7 +460,7 @@ end
 	fileID=fopen('States_Data.txt','a');
 	fprintf(fileID,'%s','#');
 	fclose(fileID);
-    save('states_data.mat', states_data);
+    save('states_data.mat', 'states_data');
 
 
 	fileID=fopen('Room_Temp_Data.txt','w');
@@ -469,6 +469,7 @@ end
 	fileID=fopen('Room_Temp_Data.txt','a');
 	fprintf(fileID,'%s','#');
 	fclose(fileID);
+    save('Room_Temp_Data.mat', 'y_data');
 
 
 	fileID=fopen('Air_Flow_Rate_Data.txt','w');
@@ -477,6 +478,8 @@ end
 	fileID=fopen('Air_Flow_Rate_Data.txt','a');
 	fprintf(fileID,'%s','#');
 	fclose(fileID);
+    save('Air_Flow_Rate_data.mat', 'u_data');
+    
 
 	fileID=fopen('Temp_Diff_Desire_Data.txt','w');
 	fprintf(fileID,'%f ',temp_diff_data);
@@ -484,6 +487,7 @@ end
 	fileID=fopen('Temp_Diff_Desire_Data.txt','a');
 	fprintf(fileID,'%s','#');
 	fclose(fileID);
+    save('Temp_Diff_Desire_Data.mat', 'temp_diff_data');
 
 
 
@@ -493,5 +497,4 @@ end
 	fileID=fopen('Power_Data.txt','a');
 	fprintf(fileID,'%s','#');
 	fclose(fileID);
-
-
+    save('Power_Data.mat', 'power_data');
