@@ -2,6 +2,7 @@
 
 
 %Input and Design parameters
+wc = 0.1;
 
 kf=1.675; %fan effeciency
 
@@ -419,7 +420,7 @@ states_data(:,1)=states;
 for k=1:N_sim;
 	%%%%%%% call controller
 
-	[u1,u2,u3,u4,u5,u6,u7]=controller1(states);
+	[u1,u2,u3,u4,u5,u6,u7]=controller1(states, wc);
 
 
 	m=u1+u2+u3+u4+u5+u6+u7;
@@ -454,47 +455,47 @@ end
 
 %%%%%% Dump data into file
 
-	fileID=fopen('States_Data.txt','w');
-	fprintf(fileID,'%f ',states_data);
-	fclose(fileID);
-	fileID=fopen('States_Data.txt','a');
-	fprintf(fileID,'%s','#');
-	fclose(fileID);
-    save('states_data.mat', 'states_data');
+% 	fileID=fopen('States_Data.txt','w');
+% 	fprintf(fileID,'%f ',states_data);
+% 	fclose(fileID);
+% 	fileID=fopen('States_Data.txt','a');
+% 	fprintf(fileID,'%s','#');
+% 	fclose(fileID);
+    save(strcat('states_data_', num2str(wc), '.mat'), 'states_data');
 
 
-	fileID=fopen('Room_Temp_Data.txt','w');
-	fprintf(fileID,'%f ',y_data);
-	fclose(fileID);
-	fileID=fopen('Room_Temp_Data.txt','a');
-	fprintf(fileID,'%s','#');
-	fclose(fileID);
-    save('Room_Temp_Data.mat', 'y_data');
+% 	fileID=fopen('Room_Temp_Data.txt','w');
+% 	fprintf(fileID,'%f ',y_data);
+% 	fclose(fileID);
+% 	fileID=fopen('Room_Temp_Data.txt','a');
+% 	fprintf(fileID,'%s','#');
+% 	fclose(fileID);
+    save(strcat('Room_Temp_data_', num2str(wc), '.mat'), 'y_data');
 
 
-	fileID=fopen('Air_Flow_Rate_Data.txt','w');
-	fprintf(fileID,'%f ',u_data);
-	fclose(fileID);
-	fileID=fopen('Air_Flow_Rate_Data.txt','a');
-	fprintf(fileID,'%s','#');
-	fclose(fileID);
-    save('Air_Flow_Rate_data.mat', 'u_data');
+% 	fileID=fopen('Air_Flow_Rate_Data.txt','w');
+% 	fprintf(fileID,'%f ',u_data);
+% 	fclose(fileID);
+% 	fileID=fopen('Air_Flow_Rate_Data.txt','a');
+% 	fprintf(fileID,'%s','#');
+% 	fclose(fileID);
+    save(strcat('Air_Flow_Rate_data_', num2str(wc), '.mat'), 'u_data');
     
 
-	fileID=fopen('Temp_Diff_Desire_Data.txt','w');
-	fprintf(fileID,'%f ',temp_diff_data);
-	fclose(fileID);
-	fileID=fopen('Temp_Diff_Desire_Data.txt','a');
-	fprintf(fileID,'%s','#');
-	fclose(fileID);
-    save('Temp_Diff_Desire_Data.mat', 'temp_diff_data');
+% 	fileID=fopen('Temp_Diff_Desire_Data.txt','w');
+% 	fprintf(fileID,'%f ',temp_diff_data);
+% 	fclose(fileID);
+% 	fileID=fopen('Temp_Diff_Desire_Data.txt','a');
+% 	fprintf(fileID,'%s','#');
+% 	fclose(fileID);
+    save(strcat('Temp_Diff_Desire_', num2str(wc), '.mat'), 'temp_diff_data');
 
 
 
-	fileID=fopen('Power_Data.txt','w');
-	fprintf(fileID,'%f ',power_data);
-	fclose(fileID);
-	fileID=fopen('Power_Data.txt','a');
-	fprintf(fileID,'%s','#');
-	fclose(fileID);
-    save('Power_Data.mat', 'power_data');
+% 	fileID=fopen('Power_Data.txt','w');
+% 	fprintf(fileID,'%f ',power_data);
+% 	fclose(fileID);
+% 	fileID=fopen('Power_Data.txt','a');
+% 	fprintf(fileID,'%s','#');
+% 	fclose(fileID);
+    save(strcat('Power_data_', num2str(wc), '.mat'), 'power_data');

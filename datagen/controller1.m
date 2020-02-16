@@ -1,10 +1,10 @@
 
-function [u1,u2,u3,u4,u5,u6,u7]=controller1(states);
+function [u1,u2,u3,u4,u5,u6,u7]=controller1(states, wc);
 
 
 %Input and Design parameters
 
-wc=0.1;
+% wc=0.1;
 we=1-wc;
 
 Ts =0.3; %% Sampling Period
