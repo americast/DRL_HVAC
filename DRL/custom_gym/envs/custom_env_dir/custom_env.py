@@ -8,6 +8,7 @@ import gym
 from gym import spaces
 from gym.utils import seeding
 from copy import deepcopy
+import scipy.io
 
 class CustomEnv(gym.Env):
     metadata = {
@@ -68,13 +69,24 @@ class CustomEnv(gym.Env):
             high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, 1, np.inf]),
             dtype=np.float32)
 
-        
-        self.f_household = open("data/household_power_consumption.txt", "r")
-        self.f_household.readline()
+        self.power_consumption = []
+        for i in range(9):
+            self.power_consumption.append(scipy.io.loadmat("data/Power_data_0."+str(i + 1)+".mat")["power_data"])
+            # shape of each mat is 1 x 168
+
+        self.temp_diff = []
+        for i in range(9):
+            self.temp_diff.append(scipy.io.loadmat("data/Temp_Diff_Desire_0."+str(i + 1)+".mat")["temp_diff_data"])
+            # shape of each mat is 7 x 168
+
+        # self.f_household = open("data/household_power_consumption.txt", "r")
+        # self.f_household.readline()
 
         self.f_power = open("data/price_per_KWH.csv", "r")
         self.f_power.readline()
+
         self.power_dict = {}
+        self.power_amt = []
         while True:
             line_here = self.f_power.readline()
             if not line_here: break
@@ -83,8 +95,16 @@ class CustomEnv(gym.Env):
             yr = date.split("-")[0]
             date_str = month+"-"+yr
             self.power_dict[date_str] = float(amt)
+            self.power_amt.append(float(amt))
 
         self.f_power.close()
+        self.power_pos = 0
+        self.max_temp_diff = 0
+        for each in self.temp_diff:
+            for j in range(each.shape[1]):
+                sum_here = sum(each[:, j])
+                if sum_here > self.max_temp_diff:
+                    self.max_temp_diff = sum_here
 
         self.seed()
         self.reset()
@@ -94,30 +114,35 @@ class CustomEnv(gym.Env):
         return [seed]
 
     def step(self, action):
-        line_household = self.f_household.readline()
-        date_here = line_household.split(";")[0]
-        month = date_here.split("/")[1]
-        yr = date_here.split("/")[-1]
-        self.counter += 1
+        # line_household = self.f_household.readline()
+        # date_here = line_household.split(";")[0]
+        # month = date_here.split("/")[1]
+        # yr = date_here.split("/")[-1]
+        # self.counter += 1
         # pu.db
-        self.v = self.power_dict[month+"-"+yr]
+        # self.v = self.power_dict[month+"-"+yr]
+        self.v = self.power_amt[self.power_pos] / max(self.power_amt)
+        self.power_pos = (self.power_pos + 1) % len(self.power_amt)
 
-        sub_meter = float(line_household.split(";")[-1])
+        # sub_meter = float(line_household.split(";")[-1])
 
-        self.state[1] = sub_meter
+        self.state[3] = int(self.state[3] * 10) / 10
+
+        self.state[1] = sum(self.temp_diff[int(self.state[3] * 10)][:, counter]) / self.max_temp_diff
         self.state[2] = self.v
 
         self.state[3] += action[1]
-        self.state[4] += action[2]
+        # self.state[4] += action[2]
 
         self.state[0] += action[0]
         self.state[-1] = self.counter
+
         e_b = self.state[0]
         e_net = self.state[1]
         v_T = self.state[2]
         w_e = self.state[3]
-        w_c = self.state[4]
-        t = self.state[5]
+        w_c = 1 - w_e
+        t = self.state[4]
         r_b = 0
         u = self.sigma * self.v
         if e_b < self.gamma * self.E2B:
@@ -144,12 +169,11 @@ class CustomEnv(gym.Env):
 
 
         self.state = np.array([
-            self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), 
-            self.np_random.uniform(low = -2, high = 2),
-            self.np_random.uniform(low = -2, high = 2),
-            self.np_random.uniform(low = 0, high = 1),
-            self.np_random.uniform(low = 0, high = 1),
-            self.np_random.uniform(low = 0, high = 9999)])
+            self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), # e_b
+            self.np_random.uniform(low = -2, high = 2),                                          # e_net
+            self.np_random.uniform(low = -2, high = 2),                                          # v_t
+            self.np_random.uniform(low = 0, high = 1),                                           # w_e
+            self.np_random.uniform(low = 0, high = 9999)])                                       # t
         
         # self.state = deepcopy(self.observation_space)
         self.counter = 0
