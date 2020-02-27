@@ -9,6 +9,7 @@ from gym import spaces
 from gym.utils import seeding
 from copy import deepcopy
 import scipy.io
+import pudb
 
 class CustomEnv(gym.Env):
     metadata = {
@@ -65,8 +66,8 @@ class CustomEnv(gym.Env):
                                             # dtype=np.float32)
 
         self.observation_space = spaces.Box(
-            low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0, 0]),
-            high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, 1, np.inf]),
+            low = np.array([self.gamma * self.E2B, -float(np.inf), -float(np.inf), 0, 0]),
+            high = np.array([(1 - self.gamma) * self.E2B, float(np.inf), float(np.inf), 1, np.inf]),
             dtype=np.float32)
 
         self.power_consumption = []
@@ -118,7 +119,6 @@ class CustomEnv(gym.Env):
         # date_here = line_household.split(";")[0]
         # month = date_here.split("/")[1]
         # yr = date_here.split("/")[-1]
-        # self.counter += 1
         # pu.db
         # self.v = self.power_dict[month+"-"+yr]
         self.v = self.power_amt[self.power_pos] / max(self.power_amt)
@@ -127,8 +127,17 @@ class CustomEnv(gym.Env):
         # sub_meter = float(line_household.split(";")[-1])
 
         self.state[3] = int(self.state[3] * 10) / 10
+        if self.state[3] < 0:
+            self.state[3] = 0.1
+        elif self.state[3] > 0.9:
+            self.state[3] = 0.9
 
-        self.state[1] = sum(self.temp_diff[int(self.state[3] * 10)][:, counter]) / self.max_temp_diff
+        try:
+            self.state[1] = sum(self.temp_diff[int(self.state[3] * 10) - 1][:, self.counter]) / self.max_temp_diff
+        except Exception as e:
+            print(e)
+            pu.db
+
         self.state[2] = self.v
 
         self.state[3] += action[1]
@@ -159,6 +168,7 @@ class CustomEnv(gym.Env):
 
         reward = r_net + r_b
 
+        self.counter += 1
         return self.state, reward, False, {}
 
     def reset(self):
