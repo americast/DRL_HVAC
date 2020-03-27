@@ -19,7 +19,7 @@ rewards = []
 avg_rewards = []
 
 # try:
-for episode in tqdm(range(50)):
+for episode in tqdm(range(500)):
     state = env.reset()
     noise.reset()
     episode_reward = 0

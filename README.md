@@ -4,7 +4,7 @@
 
 `Python 3.6+` required.
 
-Package requirements:  
+Python package requirements:  
 
 ```
 pudb
@@ -12,7 +12,13 @@ gym
 torch
 ```
 
-Install them using
+Matlab addon requirements:
+```
+optimtool
+Control Systemm Toolbox
+```
+
+Install the python packages using
 
 ```bash
 $ pip3 install pudb

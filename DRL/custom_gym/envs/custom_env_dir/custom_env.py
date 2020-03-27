@@ -98,6 +98,7 @@ class CustomEnv(gym.Env):
             self.power_dict[date_str] = float(amt)
             self.power_amt.append(float(amt))
 
+        self.power_amt = [4.5, 4.2, 4.0, 3.9, 4.0, 4.0, 4.1, 4.2, 4.4, 5.0, 5.1, 5.0, 5.1, 6.9, 6.7, 7.3, 7.5, 7.5, 8.7, 10.2, 10.4, 6.7, 6.2, 6.7, 6.5]
         self.f_power.close()
         self.power_pos = 0
         self.max_temp_diff = 0
