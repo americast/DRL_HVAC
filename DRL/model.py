@@ -35,6 +35,7 @@ class Actor(nn.Module):
         Param state is a torch tensor
         """
         # pu.db
+        # print(state)
         x = F.relu(self.linear1(state))
         x = F.relu(self.linear2(x))
         x = torch.tanh(self.linear3(x))
