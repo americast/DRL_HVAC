@@ -1,4 +1,4 @@
-function []=start3(wc, x)
+function []=start3(wc)
 % Seven Room Building
 
 
@@ -382,8 +382,8 @@ end
 % 	fprintf(fileID,'%s','#');
 % 	fclose(fileID);
 
-    save(strcat(num2str(x),'/states_data_', num2str(wc), '.mat'), 'states_data');
-    save(strcat(num2str(x),'/Room_Temp_data_', num2str(wc), '.mat'), 'y_data');
-    save(strcat(num2str(x),'/Air_Flow_Rate_data_', num2str(wc), '.mat'), 'u_data');
-    save(strcat(num2str(x),'/Temp_Diff_Desire_', num2str(wc), '.mat'), 'temp_diff_data');
-    save(strcat(num2str(x),'/Power_data_', num2str(wc), '.mat'), 'power_data');
+    save('./data/states_data.mat', 'states_data');
+    save('./data/Room_Temp_data.mat', 'y_data');
+    save('./data/Air_Flow_Rate_data.mat', 'u_data');
+    save('./data/Temp_Diff_Desire.mat', 'temp_diff_data');
+    save('./data/Power_data.mat', 'power_data');
