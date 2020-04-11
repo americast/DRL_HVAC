@@ -8,6 +8,7 @@ from DDPG import DDPGagent
 from utils import *
 import pudb
 from tqdm import tqdm
+import torch
 
 env = gym.make('CustomEnv-v0')
 
@@ -20,19 +21,19 @@ avg_rewards = []
 
 # try:
 for episode in tqdm(range(500)):
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
-    print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
+    # print("*****************************************************")
     state = env.reset()
     noise.reset()
     episode_reward = 0
     
-    for step in range(24):
+    for step in range(48):
         action = agent.get_action(state)
         action = noise.get_action(action, step)
         new_state, reward, done, _ = env.step(action) 
@@ -53,10 +54,12 @@ for episode in tqdm(range(500)):
 # except:
 #     pass
 
-plt.plot(rewards)
-plt.plot(avg_rewards)
-plt.plot()
-plt.xlabel('Episode')
-plt.ylabel('Reward')
-plt.show()
+    plt.plot(rewards)
+    plt.plot(avg_rewards)
+    plt.plot()
+    plt.xlabel('Episode')
+    plt.ylabel('Reward')
+    plt.savefig("updates.png")
+    torch.save(agent.get_model().state_dict(), "models/"+str(episode)+".pth")
+
 

@@ -1,7 +1,7 @@
 # Skeleton taken from https://github.com/openai/gym/blob/master/gym/envs/classic_control/continuous_mountain_car.py
 
 import math
-
+import io
 import numpy as np
 import torch
 import gym
@@ -46,10 +46,11 @@ class CustomEnv(gym.Env):
             high = np.array([(1 - self.gamma) * self.E2B, 1, 1, 1, 1]),
             dtype=np.float32)
         
+        self.weather_file = open("data/weather_all.txt", "r")
+        
         self.seed()
         self.reset()
 
-        self.weather_file = open("data/weather_all.txt", "r")
         all_weather = []
         while True:
             line = self.weather_file.readline()
@@ -90,7 +91,8 @@ class CustomEnv(gym.Env):
         weather_here = []
         weather_file_here = open("weather.txt", "w")
         for i in range(6):
-            line = float(self.weather_file.readline().strip())
+            line = self.weather_file.readline().strip()
+            line = float(line)
             weather_file_here.write(str(line)+"\n")
             weather_here.append(line)
         weather_file_here.close()
@@ -103,7 +105,7 @@ class CustomEnv(gym.Env):
         elif self.state[3] > 0.9:
             self.state[3] = 0.9
 
-        self.eng.start3(float(self.state[3]), nargout = 0)
+        self.eng.start3(float(self.state[3]), nargout = 0, stdout=io.StringIO())
 
         self.power_consumption = scipy.io.loadmat("data/Power_data.mat")["power_data"]
         # shape of each mat is 1 x 6
@@ -159,7 +161,8 @@ class CustomEnv(gym.Env):
         return self.state, reward, False, {}
 
     def reset(self):
-
+        self.weather_file.close()
+        self.weather_file = open("data/weather_all.txt", "r")
         self.file_no = str(int(1 + random()*20))
         self.state = np.array([
             self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), # e_b

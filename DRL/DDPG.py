@@ -69,3 +69,6 @@ class DDPGagent:
        
         for target_param, param in zip(self.critic_target.parameters(), self.critic.parameters()):
             target_param.data.copy_(param.data * self.tau + target_param.data * (1.0 - self.tau))
+
+    def get_model(self):
+        return self.actor
