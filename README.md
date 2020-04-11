@@ -1,8 +1,10 @@
 # DRL work
 
+Optimising electricity expenditure in an HVAC system under dynamic electricity pricing scheme and weather conditions.
+
 ## Requirements
 
-`Python 3.6+` required.
+`Python 3.6` or `3.7` required. `Matlab R2014b+` required.
 
 Python package requirements:  
 
@@ -15,7 +17,7 @@ torch
 Matlab addon requirements:
 ```
 optimtool
-Control Systemm Toolbox
+Control System Toolbox
 ```
 
 Install the python packages using
@@ -25,12 +27,11 @@ $ pip3 install pudb
 $ pip3 install gym
 $ pip3 install torch==1.3.1+cpu torchvision==0.4.2+cpu -f https://download.pytorch.org/whl/torch_stable.html # CPU-only variant
 ```
+
+Also, install the Matlab Engine API for Python. Instruction can be found [here](https://in.mathworks.com/help/matlab/matlab_external/install-the-matlab-engine-for-python.html).
 ## Dataset
 
-Create a directory named `DRL/data/` and place files from the following two links there:  
-
-* [Data_for_UCI_named.csv](https://drive.google.com/file/d/1FD94EPju0MJVcIbU5adO51as7_MWTdV4/view?usp=drive_web)
-* [household_power_consumption.txt](https://drive.google.com/file/d/1i-COvbDSLBoAgWeurD-pYhUTft7nenm2/view?usp=drive_web)
+Data is generated via the Matlab files. They are called directly from Python.
 
 ## Installation
 
@@ -39,7 +40,7 @@ Go to the `DRL/custom_gym` directory and issue `$ pip3 install -e .`
 ## Run the code
 
 Go to the `DRL` directory and issue `$ python3 main.py`
-The code will run for 50 episodes before plotting the reward. If a plot is desired earlier, simply issue SIGINT.
+The code will run for 500 episodes, and keep plotting the reward at `DRL/updates.png`.
 
 ## Explanations of the files
 
