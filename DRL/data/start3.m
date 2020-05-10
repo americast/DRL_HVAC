@@ -1,6 +1,8 @@
-function []=start3(wc)
+function []=start3()
 % Seven Room Building
-
+if count(py.sys.path,'') == 0
+    insert(py.sys.path,int32(0),'');
+end
 
 %Input and Design parameters
 kf=1.675; %fan effeciency
@@ -10,7 +12,7 @@ Ts =0.1; %% Sampling Period
 initial=303.15;
 
 
-fileID=fopen('weather.txt','r');
+fileID=fopen('data/weather.txt','r');
 weather=fscanf(fileID,'%f');
 fclose(fileID);
 
@@ -267,9 +269,15 @@ states_data(:,1)=states;
 
 for k=1:N_sim;
 	%%%%%%% call controller
-
-	[u1,u2,u3,u4,u5,u6,u7]=controller3(states, wc);
-
+%     to_send = py.list({num2str(states(1)), num2str(states(2)), num2str(states(3)), num2str(states(4)), num2str(states(5)), num2str(states(6)), num2str(states(7))});
+	l = py.caller.hello(py.list({states(1), states(2), states(3), states(4), states(5), states(6), states(7)}));
+    u1 = l{1};
+    u2 = l{2};
+    u3 = l{3};
+    u4 = l{4};
+    u5 = l{5};
+    u6 = l{6};
+    u7 = l{7};
 
 
 	
@@ -382,8 +390,8 @@ end
 % 	fprintf(fileID,'%s','#');
 % 	fclose(fileID);
 
-    save('./data/states_data.mat', 'states_data');
-    save('./data/Room_Temp_data.mat', 'y_data');
-    save('./data/Air_Flow_Rate_data.mat', 'u_data');
-    save('./data/Temp_Diff_Desire.mat', 'temp_diff_data');
-    save('./data/Power_data.mat', 'power_data');
+%     save('./data/states_data.mat', 'states_data');
+%     save('./data/Room_Temp_data.mat', 'y_data');
+%     save('./data/Air_Flow_Rate_data.mat', 'u_data');
+%     save('./data/Temp_Diff_Desire.mat', 'temp_diff_data');
+%     save('./data/Power_data.mat', 'power_data');
