@@ -1,4 +1,40 @@
+import socket
+host = socket.gethostbyname("localhost")
+s = []
+for i in range(6):
+	s.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+
+
 def hello(states):
+	f = open("port_init", "r")
+	port_num = f.readline().strip()
+	PORT_MIN = int(port_num)
+	f.close()
+
+	done = states[-1]
+	states = states[:-1]
+
 	"""Test help"""
 	print("Hello!")
-	return 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7
+	f = open("test", "w")
+	f.write(str(type(states[0])) + "\n" + str(states[0]) + "\n")
+	f.close()
+
+	for i, each in enumerate(states):
+		if i != 0:
+			states = [states[-1]] + states[: -1]
+		state_str = str(states + [done])[1: -1]
+		port = PORT_MIN + i
+		s[i].connect((host, port))
+		s[i].sendall(state_str)
+		# s.close()
+	
+	u_ret = []
+	for i in range(len(states)):
+		port = PORT_MIN + i
+		# s.connect((host, port))
+		u_ret.append(s[i].recv(1024))
+		s[i].close()
+
+
+	return u_ret

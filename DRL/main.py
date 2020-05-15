@@ -11,6 +11,7 @@ from tqdm import tqdm
 import torch
 
 env = gym.make('CustomEnv-v0')
+port = int(str(sys.argv[1]))
 
 agent = DDPGagent(env)
 noise = OUNoise(env.action_space)
@@ -18,6 +19,7 @@ noise = OUNoise(env.action_space)
 batch_size = 128
 rewards = []
 avg_rewards = []
+
 
 # try:
 for episode in tqdm(range(500)):
@@ -29,6 +31,7 @@ for episode in tqdm(range(500)):
     # print("*****************************************************")
     # print("*****************************************************")
     # print("*****************************************************")
+    env.set_port(port)
     state = env.reset()
     noise.reset()
     episode_reward = 0
@@ -59,7 +62,7 @@ for episode in tqdm(range(500)):
     plt.plot()
     plt.xlabel('Episode')
     plt.ylabel('Reward')
-    plt.savefig("updates.png")
+    plt.savefig("updates_"+str(port)+".png")
     torch.save(agent.get_model().state_dict(), "models/"+str(episode)+".pth")
 
 

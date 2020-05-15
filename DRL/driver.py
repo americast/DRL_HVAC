@@ -1,6 +1,18 @@
 import matlab.engine
 import io
 from tqdm import tqdm
+import os
+
+
+f = open("port_init", "r")
+port_num = f.readline().strip()
+START_PORT_NUM = int(port_num)
+f.close()
+
+for i in range(7):
+	print("Starting RL learner at port "+str(START_PORT_NUM + i))
+	os.system("python3 main.py "+str(START_PORT_NUM + i)+" &")
+
 
 NUM_EPOCHS = 1
 
@@ -22,10 +34,16 @@ for _ in range(NUM_EPOCHS):
 	for i in tqdm(range(0, len(all_weather), 6)):
 		weather_here = all_weather[i: i + 6]
 		f = open("data/weather.txt", "w")
+		weather_sum = 0
 		for each in weather_here:
-			f.write(str(each)+"\n")
+			weather_sum += float(each)
+		weather_sum /= 6
+		f.write(str(weather_sum)+"\n")
 		f.close()
 
-		eng.start3(nargout = 0, stdout=io.StringIO())
+		if i == len(all_weather) - 1:
+			eng.start3(1, nargout = 0, stdout=io.StringIO())
+		else:
+			eng.start3(0, nargout = 0, stdout=io.StringIO())
 
 
