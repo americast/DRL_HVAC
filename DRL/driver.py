@@ -32,6 +32,7 @@ weather_file = open("data/weather_all.txt", "r")
 
 for _ in range(NUM_EPOCHS):
 	for i in tqdm(range(0, len(all_weather), 6)):
+		print(i)
 		weather_here = all_weather[i: i + 6]
 		f = open("data/weather.txt", "w")
 		weather_sum = 0

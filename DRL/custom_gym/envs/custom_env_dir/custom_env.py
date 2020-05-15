@@ -45,9 +45,9 @@ class CustomEnv(gym.Env):
             dtype= np.float32)
 
         self.observation_space = spaces.Box(
-            # state vector:  eb_t, enet_t, v_t, T_in, T_out, m, t
-            low =  np.array([self.gamma * self.E2B,       0, 0, 0, 0, 0]),
-            high = np.array([(1 - self.gamma) * self.E2B, 1, 1, 1, 1, 1]),
+            # state vector:  eb_t,                       v_t, T_1, T_2, T_3, T_4, T_5, T_6, T_7, T_del, w_t
+            low =  np.array([self.gamma * self.E2B,       0,   0,   0,   0,   0,   0,   0,   0,    0,    0]),
+            high = np.array([(1 - self.gamma) * self.E2B, 1,   1,   1,   1,   1,   1,   1,   1,    1,    1]),
             dtype=np.float32)
 
         self.all_weather_file = open("data/weather_all.txt", "r")
@@ -82,7 +82,7 @@ class CustomEnv(gym.Env):
 
         self.power_amt = [4.5, 4.2, 4.0, 3.9, 4.0, 4.0, 4.1, 4.2, 4.4, 5.0, 5.1, 5.0, 5.1, 6.9, 6.7, 7.3, 7.5, 7.5, 8.7, 10.2, 10.4, 6.7, 6.2, 6.7, 6.5]
 
-        # self.power_pos = 0
+        self.power_pos = 0
         # self.max_temp = 0
         # self.min_temp = 0
         # self.num_dim = self.room_temp[0].shape[0]
@@ -226,7 +226,7 @@ class CustomEnv(gym.Env):
 
         self.state = np.array([
             self.np_random.uniform(low=self.gamma * self.E2B, high=(1 - self.gamma) * self.E2B), # e_b
-            self.power_amt[self.power_pos] / max(self.power_amt)                                 # v_t
+            self.power_amt[self.power_pos] / max(self.power_amt),  # v_t
             *temp_state,
             w_del / 40,
             w_out / 40
