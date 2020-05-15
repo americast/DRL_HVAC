@@ -1,7 +1,7 @@
 # Skeleton taken from https://github.com/openai/gym/blob/master/gym/envs/classic_control/continuous_mountain_car.py
 
 import math
-
+import sys
 import numpy as np
 import torch
 import gym
@@ -50,7 +50,6 @@ class CustomEnv(gym.Env):
             high = np.array([(1 - self.gamma) * self.E2B, 1,   1,   1,   1,   1,   1,   1,   1,    1,    1]),
             dtype=np.float32)
 
-        self.all_weather_file = open("data/weather_all.txt", "r")
         
         self.seed()
         # # self.reset()
@@ -130,7 +129,7 @@ class CustomEnv(gym.Env):
         temp_state = []
 
         for i, each in enumerate(k.split(" ")):
-            temp_state.append(float(each)[:-1] / 40)
+            temp_state.append(float(each[:-1]) / 40)
             if i == 6: break
 
         done = int(k.split(" ")[-1])
@@ -159,7 +158,7 @@ class CustomEnv(gym.Env):
 
         w_out /= 6
 
-        self.state = self.state[:2] + temp_state + w_del / 40 + w_out / 40
+        self.state = list(self.state[:2]) + temp_state + [w_del / 40] + [w_out / 40]
 
 
         # Reward function
@@ -173,7 +172,7 @@ class CustomEnv(gym.Env):
         # w_e = self.state[3]
         # w_c = 1 - w_e
         # t = self.state[4]
-        u = self.sigma * self.v_T
+        u = self.sigma * v_T
 
 
         r_b = 0
@@ -183,23 +182,26 @@ class CustomEnv(gym.Env):
             r_b = -(e_b * u + (1 - self.eps) * self.E2B)
 
 
-        r_net = 0
-        if w_c > 1:
-            r_net = -(e_net * u + self.k2up * (w_c - 1))
-        elif w_c < 0:
-            r_net = -(e_net * u + self.k2low * (0 - w_c))
-        else:
-            r_net = -(e_net * u)
+        # r_net = 0
+        # if w_c > 1:
+        #     r_net = -(e_net * u + self.k2up * (w_c - 1))
+        # elif w_c < 0:
+        #     r_net = -(e_net * u + self.k2low * (0 - w_c))
+        # else:
+        #     r_net = -(e_net * u)
 
-        reward = r_net + r_b
+        reward = r_b
 
         self.counter += 1
 
         # print(self.state)
+        if done == True:
+            self.all_weather_file.close()
 
-        return self.state, reward, done, {}
+        return np.array(self.state), reward, done, {}
 
     def reset(self):
+        self.all_weather_file = open("data/weather_all.txt", "r")
         self.conn, addr = self.s.accept()
         k = str(self.conn.recv(1024))[2:-2] # converts bytes to str
         # pu.db

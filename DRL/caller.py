@@ -1,11 +1,11 @@
 import socket
 host = socket.gethostbyname("localhost")
-s = []
-for i in range(7):
-	s.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 
 
 def hello(states):
+	s = []
+	for i in range(7):
+		s.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 	f = open("port_init", "r")
 	port_num = f.readline().strip()
 	PORT_MIN = int(port_num)

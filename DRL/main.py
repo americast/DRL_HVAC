@@ -19,6 +19,7 @@ noise = OUNoise(env.action_space)
 batch_size = 128
 rewards = []
 avg_rewards = []
+env.set_port(port)
 
 
 # try:
@@ -31,12 +32,12 @@ for episode in tqdm(range(500)):
     # print("*****************************************************")
     # print("*****************************************************")
     # print("*****************************************************")
-    env.set_port(port)
     state = env.reset()
     noise.reset()
     episode_reward = 0
-    
-    for step in range(48):
+    step = 0
+
+    while True:
         action = agent.get_action(state)
         action = noise.get_action(action, step)
         new_state, reward, done, _ = env.step(action) 
@@ -48,10 +49,11 @@ for episode in tqdm(range(500)):
         state = new_state
         episode_reward += reward
 
-        if step == 499:
+        if done:
             sys.stdout.write("episode: {}, reward: {}, average _reward: {} \n".format(episode, np.round(episode_reward, decimals=2), np.mean(rewards[-10:])))
             break
-
+        else:
+            step += 1
     rewards.append(episode_reward)
     avg_rewards.append(np.mean(rewards[-10:]))
 # except:
@@ -62,7 +64,7 @@ for episode in tqdm(range(500)):
     plt.plot()
     plt.xlabel('Episode')
     plt.ylabel('Reward')
-    plt.savefig("updates_"+str(port)+".png")
+    plt.savefig("updates_"+str(port)[-1]+".png")
     torch.save(agent.get_model().state_dict(), "models/"+str(episode)+".pth")
 
 
