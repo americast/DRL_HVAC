@@ -64,7 +64,7 @@ for episode in tqdm(range(500)):
     plt.plot()
     plt.xlabel('Episode')
     plt.ylabel('Reward')
-    plt.savefig("updates_"+str(port)[-1]+".png")
+    plt.savefig("figs/updates_"+str(port)[-1]+".png")
     torch.save(agent.get_model().state_dict(), "models/"+str(episode)+".pth")
 
 
