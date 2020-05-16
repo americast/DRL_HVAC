@@ -32,7 +32,7 @@ weather_file = open("data/weather_all.txt", "r")
 
 for _ in range(NUM_EPOCHS):
 	for i in tqdm(range(0, len(all_weather), 6)):
-		print("Here: "+str(i) +"/"+str(len(all_weather))+"\n\n")
+		# print("Here: "+str(i) +"/"+str(len(all_weather))+"\n\n")
 		weather_here = all_weather[i: i + 6]
 		f = open("data/weather.txt", "w")
 		weather_sum = 0
@@ -43,7 +43,6 @@ for _ in range(NUM_EPOCHS):
 		f.close()
 
 		if i == len(all_weather) - 6:
-			print("Yoooooooooooooooooooooo\n\n")
 			eng.start3(1, nargout = 0, stdout=io.StringIO())
 		else:
 			eng.start3(0, nargout = 0, stdout=io.StringIO())

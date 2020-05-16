@@ -39,11 +39,13 @@ Go to the `DRL/custom_gym` directory and issue `$ pip3 install -e .`
 
 ## Run the code
 
-Go to the `DRL` directory and issue `$ python3 main.py`
-The code will run for 500 episodes, and keep plotting the reward at `DRL/updates.png`.
+Adjust the port no at which the RL models run in the file `port_init`. Seven RL models run in parallel at ports provided at the file, as well as the next six ports.  
+Go to the `DRL` directory and issue `$ python3 driver.py`
+The code will run for 500 episodes, and keep plotting the reward at `DRL/updates_<zone>.png`.
 
 ## Explanations of the files
-
+`DRL/driver.py`: Calls the seven RL models one by one in parallel, generates weather data for each step and triggers the matlab code to start.  
+`DRL/caller.py`: The matlab code sends the state data to this file, which in turn sends them to the RL models which wait for the data over TCP sockets.  
 `DRL/main.py`: Calls all the other modules and runs them by and by.  
 `DRL/model.py`: Contains DL models for actor and critic.  
 `DRL/DDPG.py`: Calls and updates the actor and critic modules.  
