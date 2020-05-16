@@ -35,9 +35,9 @@ for episode in tqdm(range(500)):
     state = env.reset()
     noise.reset()
     episode_reward = 0
-    step = 0
+    # step = 0
 
-    while True:
+    for step in range(48):
         action = agent.get_action(state)
         action = noise.get_action(action, step)
         new_state, reward, done, _ = env.step(action) 
@@ -50,10 +50,10 @@ for episode in tqdm(range(500)):
         episode_reward += reward
 
         if done:
+            env.return_action(action)
             sys.stdout.write("episode: {}, reward: {}, average _reward: {} \n".format(episode, np.round(episode_reward, decimals=2), np.mean(rewards[-10:])))
             break
-        else:
-            step += 1
+
     rewards.append(episode_reward)
     avg_rewards.append(np.mean(rewards[-10:]))
 # except:

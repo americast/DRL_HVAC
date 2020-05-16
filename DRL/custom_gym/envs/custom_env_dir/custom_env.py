@@ -116,6 +116,12 @@ class CustomEnv(gym.Env):
         self.np_random, seed = seeding.np_random(seed)
         return [seed]
 
+    def return_action(self, action):
+        del_b = action[0]
+        del_m = action[1]
+        self.conn.sendall(str.encode(str(action[1])))
+        self.conn.close()
+
     def step(self, action):
         del_b = action[0]
         del_m = action[1]
