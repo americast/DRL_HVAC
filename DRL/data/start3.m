@@ -1,4 +1,4 @@
-function []=start3(done)
+function []=start3(done, epoch, i_py)
 % Seven Room Building
 if count(py.sys.path,'') == 0
     insert(py.sys.path,int32(0),'');
@@ -350,8 +350,8 @@ for k=1:N_sim;
 
 end
 
-%%%%%% Dump data into file
-
+%%%%%% epoch data into file
+    
 % 	fileID=fopen('States_Data.txt','w');
 % 	fprintf(fileID,'%f ',states_data);
 % 	fclose(fileID);
@@ -390,8 +390,10 @@ end
 % 	fprintf(fileID,'%s','#');
 % 	fclose(fileID);
 
-%     save('./data/states_data.mat', 'states_data');
-%     save('./data/Room_Temp_data.mat', 'y_data');
-%     save('./data/Air_Flow_Rate_data.mat', 'u_data');
-%     save('./data/Temp_Diff_Desire.mat', 'temp_diff_data');
-%     save('./data/Power_data.mat', 'power_data');
+if epoch == 1
+    save(strcat('./results/states_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'states_data');
+    save(strcat('./results/Room_Temp_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'y_data');
+    save(strcat('./results/Air_Flow_Rate_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'u_data');
+    save(strcat('./results/Temp_Diff_Desire_',num2str(epoch),'_',num2str(i_py),'.mat'), 'temp_diff_data');
+    save(strcat('./results/Power_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'power_data');
+end;

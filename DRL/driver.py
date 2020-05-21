@@ -43,8 +43,8 @@ for _ in range(NUM_EPOCHS):
 		f.close()
 
 		if i == len(all_weather) - 6:
-			eng.start3(1, nargout = 0, stdout=io.StringIO())
+			eng.start3(1, _, i, nargout = 0, stdout=io.StringIO())
 		else:
-			eng.start3(0, nargout = 0, stdout=io.StringIO())
+			eng.start3(0, _, i, nargout = 0, stdout=io.StringIO())
 
 
