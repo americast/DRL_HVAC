@@ -5,14 +5,14 @@ import os
 import argparse
 
 my_parser = argparse.ArgumentParser()
+my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no")
 my_parser.add_argument('-i', '--infer', action='store_true')
 args = my_parser.parse_args()
 infer = vars(args)['infer']
+START_PORT_NUM = vars(args)['port']
 
-
-f = open("port_init", "r")
-port_num = f.readline().strip()
-START_PORT_NUM = int(port_num)
+f = open("port_init", "w")
+f.write(str(START_PORT_NUM)+"\n")
 f.close()
 
 for i in range(7):

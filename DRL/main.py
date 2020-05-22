@@ -83,6 +83,10 @@ for episode in tqdm(range(num_episodes)):
     else:
         plt.savefig("figs/updates_"+str(port)[-1]+".png")
     if not infer:
-        torch.save(agent.get_model().state_dict(), "models/"+str(episode)+"_"+str(port)[-1]+".pth")
+        if episode > 0 and episode_reward > max(rewards[:-1]):
+            torch.save(agent.get_model().state_dict(), "models/zone_"+str(port)[-1]+".pth")
+            f = open("models/zone_"+str(port)[-1]+"_reward.txt", "w")
+            f.write("Rewards: "+str(rewards)+"\nEpoch: "+str(episode)+"\n")
+            f.close()
 
 
