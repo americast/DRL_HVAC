@@ -1,4 +1,4 @@
-function []=start3(done, epoch, i_py)
+function []=start3(done, infer, i_py)
 % Seven Room Building
 if count(py.sys.path,'') == 0
     insert(py.sys.path,int32(0),'');
@@ -390,10 +390,10 @@ end
 % 	fprintf(fileID,'%s','#');
 % 	fclose(fileID);
 
-if epoch == 1
-    save(strcat('./results/states_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'states_data');
-    save(strcat('./results/Room_Temp_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'y_data');
-    save(strcat('./results/Air_Flow_Rate_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'u_data');
-    save(strcat('./results/Temp_Diff_Desire_',num2str(epoch),'_',num2str(i_py),'.mat'), 'temp_diff_data');
-    save(strcat('./results/Power_data_',num2str(epoch),'_',num2str(i_py),'.mat'), 'power_data');
+if infer == 1
+    save(strcat('./results/states_data_',num2str(i_py),'.mat'), 'states_data');
+    save(strcat('./results/Room_Temp_data_',num2str(i_py),'.mat'), 'y_data');
+    save(strcat('./results/Air_Flow_Rate_data_',num2str(i_py),'.mat'), 'u_data');
+    save(strcat('./results/Temp_Diff_Desire_',num2str(i_py),'.mat'), 'temp_diff_data');
+    save(strcat('./results/Power_data_',num2str(i_py),'.mat'), 'power_data');
 end;

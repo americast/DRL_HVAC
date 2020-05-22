@@ -2,6 +2,12 @@ import matlab.engine
 import io
 from tqdm import tqdm
 import os
+import argparse
+
+my_parser = argparse.ArgumentParser()
+my_parser.add_argument('-i', '--infer', action='store_true')
+args = my_parser.parse_args()
+infer = vars(args)['infer']
 
 
 f = open("port_init", "r")
@@ -11,10 +17,14 @@ f.close()
 
 for i in range(7):
 	print("Starting RL learner at port "+str(START_PORT_NUM + i))
-	os.system("python3 main.py "+str(START_PORT_NUM + i)+" &")
+	if infer:
+		os.system("python3 main.py -p "+str(START_PORT_NUM + i)+" -i &")
+	else:
+		os.system("python3 main.py -p "+str(START_PORT_NUM + i)+" &")
 
 
-NUM_EPOCHS = 500
+NUM_EPOCHS = 100
+if infer: NUM_EPOCHS = 1
 
 weather_file = open("data/weather_all.txt", "r")
 
@@ -43,8 +53,8 @@ for _ in range(NUM_EPOCHS):
 		f.close()
 
 		if i == len(all_weather) - 6:
-			eng.start3(1, _, i, nargout = 0, stdout=io.StringIO())
+			eng.start3(1, int(infer), i, nargout = 0, stdout=io.StringIO())
 		else:
-			eng.start3(0, _, i, nargout = 0, stdout=io.StringIO())
+			eng.start3(0, int(infer), i, nargout = 0, stdout=io.StringIO())
 
 

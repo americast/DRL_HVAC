@@ -72,3 +72,7 @@ class DDPGagent:
 
     def get_model(self):
         return self.actor
+
+    def load_model(self, path):
+        self.actor.load_state_dict(torch.load(path))
+        self.actor.eval()
