@@ -12,7 +12,7 @@ import torch
 import argparse
 
 my_parser = argparse.ArgumentParser()
-my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no")
+my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no (must end with 1)")
 my_parser.add_argument('-i', '--infer', action='store_true', help="Run inference instead of training")
 args = my_parser.parse_args()
 infer = vars(args)['infer']
@@ -23,7 +23,7 @@ port = vars(args)['port']
 
 agent = DDPGagent(env)
 if infer:
-    agent.load_model("models/2_"+str(port)[-1]+".pth")
+    agent.load_model("models/zone_"+str(port)[-1]+".pth")
     print("Model loaded!")
 noise = OUNoise(env.action_space)
 # pu.db
@@ -81,7 +81,7 @@ for episode in tqdm(range(num_episodes)):
         f.write("Reward: "+str(avg_rewards)+"\n")
         f.close()
     else:
-        plt.savefig("figs/updates_"+str(port)[-1]+".png")
+        plt.savefig("models/figs/updates_"+str(port)[-1]+".png")
     if not infer:
         if episode > 0 and episode_reward > max(rewards[:-1]):
             torch.save(agent.get_model().state_dict(), "models/zone_"+str(port)[-1]+".pth")

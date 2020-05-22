@@ -5,11 +5,15 @@ import os
 import argparse
 
 my_parser = argparse.ArgumentParser()
-my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no")
+my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no (must end with 1)")
 my_parser.add_argument('-i', '--infer', action='store_true')
 args = my_parser.parse_args()
 infer = vars(args)['infer']
 START_PORT_NUM = vars(args)['port']
+
+if START_PORT_NUM%10 != 1:
+	print("ERROR: Port no must end with 1.")
+	os.exit(1)
 
 f = open("port_init", "w")
 f.write(str(START_PORT_NUM)+"\n")
