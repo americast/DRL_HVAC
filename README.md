@@ -37,11 +37,16 @@ Data is generated via the Matlab files. They are called directly from Python.
 
 Go to the `DRL/custom_gym` directory and issue `$ pip3 install -e .`  
 
-## Running the code
+## Training
+Go to the `DRL` directory and issue `$ python3 driver.py -p <port no>` to train. Seven RL models run in parallel at ports provided at command-line flag, as well as the next six ports. A small help section may be accessed using `python3 driver.py -h`.  
+The code will run for 100 episodes, and keep plotting the reward as `DRL/models/figs/updates_<zone>.png` at every step.  
+The best model for each zone shall be saved in the `DRL/models/` directory.
 
-Adjust the port no at which the RL models run in the file `DRL/port_init`. Seven RL models run in parallel at ports provided at the file, as well as the next six ports.  
-Go to the `DRL` directory and issue `$ python3 driver.py`
-The code will run for 500 episodes, and keep plotting the reward as `DRL/figs/updates_<zone>.png` at every step.
+## Inference and Results
+Add a flag `-i` to the command to perform inference i.e., `$ python3 driver.py -p <port no> -i`. The results shall be stored in `DRL/results/` directory. In order to obtain plots (and make the results easily interpretable), issue the command `python3 plot_gen.py`. All commands are to be issued from the `DRL/` directory.
+
+## Trained models and results
+Trained model files and interpretable results (plots only) have been provided in the `DRL/models/` and `DRL/results/` directory respectively. In order to obtain the full results, run the commands as instructed above.
 
 ## Description of the files
 `DRL/driver.py`: Calls the seven RL models one by one in parallel, generates weather data for each step and triggers the matlab code to start.  
@@ -50,4 +55,5 @@ The code will run for 500 episodes, and keep plotting the reward as `DRL/figs/up
 `DRL/model.py`: Contains DL models for actor and critic.  
 `DRL/DDPG.py`: Calls and updates the actor and critic modules.  
 `DRL/utils.py`: Addon implementations (noise, memory and normalisation).  
+`DRL/plot_gen.py`: Generates plots for easy interpretation of the results.  
 `DRL/custom_gym/envs/custom_env_dir/custom_env.py`: Gym environment (the `step` function contains action implementation and reward).  
