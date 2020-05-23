@@ -270,7 +270,7 @@ states_data(:,1)=states;
 for k=1:N_sim;
 	%%%%%%% call controller
 %     to_send = py.list({num2str(states(1)), num2str(states(2)), num2str(states(3)), num2str(states(4)), num2str(states(5)), num2str(states(6)), num2str(states(7))});
-	l = py.caller.hello(py.list({states(1), states(2), states(3), states(4), states(5), states(6), states(7), done}));
+	l = py.caller.connector(py.list({states(1), states(2), states(3), states(4), states(5), states(6), states(7), done}));
     u1 = l{1};
     u2 = l{2};
     u3 = l{3};

@@ -2,7 +2,7 @@ import socket
 host = socket.gethostbyname("localhost")
 
 
-def hello(states):
+def connector(states):
 	s = []
 	for i in range(7):
 		s.append(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
@@ -24,6 +24,7 @@ def hello(states):
 		print(i)
 		if i != 0:
 			states = [states[-1]] + states[: -1]
+		# states = [x - 10 for x in states]
 		state_str = str(states + [done])[1: -1]
 		port = PORT_MIN + i
 		s[i].connect((host, port))

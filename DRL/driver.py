@@ -20,7 +20,10 @@ f.write(str(START_PORT_NUM)+"\n")
 f.close()
 
 for i in range(7):
-	print("Starting RL learner at port "+str(START_PORT_NUM + i))
+	if infer:
+		print("Starting RL inference at port "+str(START_PORT_NUM + i))
+	else:
+		print("Starting RL learner at port "+str(START_PORT_NUM + i))
 	if infer:
 		os.system("python3 main.py -p "+str(START_PORT_NUM + i)+" -i &")
 	else:
