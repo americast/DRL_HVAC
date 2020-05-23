@@ -2,6 +2,7 @@
 
 import math
 import sys
+import os
 import numpy as np
 import torch
 import gym
@@ -38,6 +39,7 @@ class CustomEnv(gym.Env):
         self.k2up = 0.5
         self.k2low = 0.5
         self.counter = 0
+        self.lambda_ = 0.15
 
         self.action_space = spaces.Box(
             low  = np.array([-self.d_max, 0]),
@@ -122,7 +124,7 @@ class CustomEnv(gym.Env):
         self.conn.sendall(str.encode(str(action[1])))
         self.conn.close()
 
-    def step(self, action):
+    def step(self, action, r2 = False):
         del_b = action[0]
         del_m = action[1]
         self.conn.sendall(str.encode(str(action[1])))
@@ -144,10 +146,10 @@ class CustomEnv(gym.Env):
         else: done = False
 
         w_del = 0
-        if temp_state[0] * 40 < 19:
-            w_del = 19 - temp_state[0] * 40
-        if temp_state[0] * 40 > 25:
-            w_del = temp_state[0] * 40 - 25
+        if temp_state[0] * 40 < 19 + 273.15:
+            w_del = 19 + 273.15 - temp_state[0] * 40
+        if temp_state[0] * 40 > 25 + 273.15:
+            w_del = temp_state[0] * 40 - (25 + 273.15)
 
 
 
@@ -168,10 +170,6 @@ class CustomEnv(gym.Env):
 
 
         # Reward function
-
-        
-        # self.state[-1] = self.counter / 168
-
         e_b = self.state[0]
         e_net = self.state[-1]
         v_T = self.state[1]
@@ -180,23 +178,33 @@ class CustomEnv(gym.Env):
         # t = self.state[4]
         u = self.sigma * v_T
 
-
-        r_b = 0
-        if e_b < self.gamma * self.E2B:
-            r_b = -(e_b * u + self.eps * self.E2B)
+        
+        # self.state[-1] = self.counter / 168
+        if r2:
+            reward = -self.lambda_ * v_T - self.state[-2]
+            # print("v_T: "+str(v_T))
+            # print("self.state[-2]: "+str(self.state[-2]))
+            # print("w_del: "+str(w_del))
         else:
-            r_b = -(e_b * u + (1 - self.eps) * self.E2B)
 
 
-        # r_net = 0
-        # if w_c > 1:
-        #     r_net = -(e_net * u + self.k2up * (w_c - 1))
-        # elif w_c < 0:
-        #     r_net = -(e_net * u + self.k2low * (0 - w_c))
-        # else:
-        #     r_net = -(e_net * u)
 
-        reward = r_b
+            r_b = 0
+            if e_b < self.gamma * self.E2B:
+                r_b = -(e_b * u + self.eps * self.E2B)
+            else:
+                r_b = -(e_b * u + (1 - self.eps) * self.E2B)
+
+
+            # r_net = 0
+            # if w_c > 1:
+            #     r_net = -(e_net * u + self.k2up * (w_c - 1))
+            # elif w_c < 0:
+            #     r_net = -(e_net * u + self.k2low * (0 - w_c))
+            # else:
+            #     r_net = -(e_net * u)
+
+            reward = r_b
 
         self.counter += 1
 
@@ -221,11 +229,13 @@ class CustomEnv(gym.Env):
             if i == 6: break
 
         w_del = 0
-        if temp_state[0] * 40 < 19:
-            w_del = 19 - temp_state[0] * 40
-        if temp_state[0] * 40 > 25:
-            w_del = temp_state[0] * 40 - 25
+        if temp_state[0] * 40 < (19 + 273.15):
+            w_del = (19 + 273.15) - temp_state[0] * 40
+        if temp_state[0] * 40 > (25 + 273.15):
+            w_del = temp_state[0] * 40 - (25 + 273.15)
 
+        # print("temp_state[0]: "+str(temp_state[0]))
+        # sys.exit(0)
         w_out = 0
         for i in range(6):
             w_out += float(self.all_weather_file.readline().strip())

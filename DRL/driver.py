@@ -9,9 +9,16 @@ my_parser = argparse.ArgumentParser()
 my_parser.add_argument('-p', '--port', action='store', type=int, help="Specify port no (must end with 1)")
 my_parser.add_argument('-i', '--infer', action='store_true', help="Run inference instead of training")
 my_parser.add_argument('-m', '--mpc', action='store_true', help="Run the MPC variant. Port nos must not be provided if this is enabled.")
+my_parser.add_argument('-r2', '--reward2', action='store_true', help="Train and infer with the second reward function.")
 args = my_parser.parse_args()
 infer = vars(args)['infer']
 mpc = vars(args)['mpc']
+r2 = vars(args)['reward2']
+
+r_str, i_str = "", ""
+if r2: r_str = " -r2 "
+if infer: i_str = " -i "
+
 START_PORT_NUM = vars(args)['port']
 
 if mpc and START_PORT_NUM is not None:
@@ -36,10 +43,8 @@ if not mpc:
 			print("Starting RL inference at port "+str(START_PORT_NUM + i))
 		else:
 			print("Starting RL learner at port "+str(START_PORT_NUM + i))
-		if infer:
-			os.system("python3 main.py -p "+str(START_PORT_NUM + i)+" -i &")
-		else:
-			os.system("python3 main.py -p "+str(START_PORT_NUM + i)+" &")
+		
+		os.system("python3 main.py -p "+str(START_PORT_NUM + i)+i_str+r_str+" &")
 
 
 NUM_EPOCHS = 100
@@ -75,13 +80,13 @@ for _ in range(NUM_EPOCHS):
 
 		if not mpc:
 			if i == len(all_weather) - 6:
-				eng.start3(1, int(infer), i, nargout = 0, stdout=io.StringIO())
+				eng.start3(1, int(infer), i, int(r2), nargout = 0, stdout=io.StringIO())
 			else:
-				eng.start3(0, int(infer), i, nargout = 0, stdout=io.StringIO())
+				eng.start3(0, int(infer), i, int(r2), nargout = 0, stdout=io.StringIO())
 		else:
 			if i == len(all_weather) - 6:
-				eng.start3_mpc(1, int(infer), i, nargout = 0, stdout=io.StringIO())
+				eng.start3_mpc(1, int(infer), i, int(r2), nargout = 0, stdout=io.StringIO())
 			else:
-				eng.start3_mpc(0, int(infer), i, nargout = 0, stdout=io.StringIO())
+				eng.start3_mpc(0, int(infer), i, int(r2), nargout = 0, stdout=io.StringIO())
 
 
