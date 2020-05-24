@@ -391,7 +391,7 @@ end
 % 	fclose(fileID);
 
 if infer == 1
-    if r2 == 1
+    if r2_py == 1
         save(strcat('./results/states_data_',num2str(i_py),'_r2.mat'), 'states_data');
         save(strcat('./results/Room_Temp_data_',num2str(i_py),'_r2.mat'), 'y_data');
         save(strcat('./results/Air_Flow_Rate_data_',num2str(i_py),'_r2.mat'), 'u_data');
