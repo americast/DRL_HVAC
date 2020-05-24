@@ -10,16 +10,27 @@ my_parser.add_argument('-p', '--port', action='store', type=int, help="Specify p
 my_parser.add_argument('-i', '--infer', action='store_true', help="Run inference instead of training")
 my_parser.add_argument('-m', '--mpc', action='store_true', help="Run the MPC variant. Port nos must not be provided if this is enabled.")
 my_parser.add_argument('-r2', '--reward2', action='store_true', help="Train and infer with the second reward function.")
+my_parser.add_argument('-c', '--combo', action='store_true', help="Train the DRL+MPC model.")
 args = my_parser.parse_args()
 infer = vars(args)['infer']
 mpc = vars(args)['mpc']
 r2 = vars(args)['reward2']
+combo = vars(args)['combo']
+START_PORT_NUM = vars(args)['port']
+
+if combo and START_PORT_NUM is not None:
+	print("ERROR: Port no should not be provided with combo enabled.")
+	os.exit(1)
+
+if combo:
+	import combo as combo_pkg
+	combo_pkg.main(infer)
+	os.exit(0)
 
 r_str, i_str = "", ""
 if r2: r_str = " -r2 "
 if infer: i_str = " -i "
 
-START_PORT_NUM = vars(args)['port']
 
 if mpc and START_PORT_NUM is not None:
 	print("ERROR: Port no should not be provided with mpc enabled.")

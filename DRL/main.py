@@ -98,12 +98,22 @@ for episode in tqdm(range(num_episodes)):
         if episode > 0 and episode_reward > max(rewards[:-1]):
             if r2:
                 torch.save(agent.get_model().state_dict(), "models/zone_"+str(port)[-1]+"_r2.pth")
-                f = open("models/zone_"+str(port)[-1]+"_reward_r2.txt", "w")
+                f = open("models/zone_"+str(port)[-1]+"_best_reward_r2.txt", "w")
                 f.write("Rewards r2: "+str(rewards)+"\nEpoch: "+str(episode)+"\n")
                 f.close()
             else:
                 torch.save(agent.get_model().state_dict(), "models/zone_"+str(port)[-1]+".pth")
-                f = open("models/zone_"+str(port)[-1]+"_reward.txt", "w")
+                f = open("models/zone_"+str(port)[-1]+"_best_reward.txt", "w")
                 f.write("Rewards: "+str(rewards)+"\nEpoch: "+str(episode)+"\n")
                 f.close()
+
+        if r2:
+            f = open("models/zone_"+str(port)[-1]+"_rewards_r2.txt", "w")
+            f.write("Rewards: "+str(avg_rewards)+"\n")
+            f.close()
+        else:
+            f = open("models/zone_"+str(port)[-1]+"_rewards.txt", "w")
+            f.write("Rewards: "+str(avg_rewards)+"\n")
+            f.close()
+
 
