@@ -20,12 +20,12 @@ START_PORT_NUM = vars(args)['port']
 
 if combo and START_PORT_NUM is not None:
 	print("ERROR: Port no should not be provided with combo enabled.")
-	os.exit(1)
+	sys.exit(1)
 
 if combo:
 	import combo as combo_pkg
 	combo_pkg.main(infer)
-	os.exit(0)
+	sys.exit(0)
 
 r_str, i_str = "", ""
 if r2: r_str = " -r2 "
@@ -34,15 +34,15 @@ if infer: i_str = " -i "
 
 if mpc and START_PORT_NUM is not None:
 	print("ERROR: Port no should not be provided with mpc enabled.")
-	os.exit(1)
+	sys.exit(1)
 
 if not mpc and START_PORT_NUM is None:
 	print("ERROR: Either port no should be provided or mpc must be enabled.")
-	os.exit(1)
+	sys.exit(1)
 
 if START_PORT_NUM is not None and START_PORT_NUM%10 != 1:
 	print("ERROR: Port no must end with 1.")
-	os.exit(1)
+	sys.exit(1)
 
 if not mpc:
 	f = open("port_init", "w")
