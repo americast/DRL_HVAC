@@ -10,6 +10,7 @@ import pudb
 from tqdm import tqdm
 import torch
 import argparse
+import custom_env
 
 my_parser = argparse.ArgumentParser()
 my_parser.add_argument('-p', '--port', action='store', type=int, required=True, help="Specify port no (must end with 1)")
@@ -20,7 +21,7 @@ args = my_parser.parse_args()
 infer = vars(args)['infer']
 r2 = vars(args)['reward2']
 
-env = gym.make('CustomEnv-v0')
+env = custom_env.CustomEnv()
 port = vars(args)['port']
 # pu.db
 

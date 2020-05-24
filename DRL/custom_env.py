@@ -15,7 +15,7 @@ from random import random
 import math
 import socket
 
-class CustomEnv(gym.Env):
+class CustomEnv():
     metadata = {
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second': 30
